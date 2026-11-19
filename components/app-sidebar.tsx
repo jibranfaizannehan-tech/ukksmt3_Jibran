@@ -45,7 +45,7 @@ export function AppSidebar() {
         <SidebarHeader className="p-4 bg-emerald-700">
           <div className="flex items-center justify-center gap-3 px-3 py-2">
             <Image
-              src="/img/smk_mvp_ars_logo_white.png"
+              src="/img/Yamada Ryo.jpg"
               alt="SMK MVP ARS"
               width={200}
               height={200}

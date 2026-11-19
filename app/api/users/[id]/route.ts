@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
-import { getAuthenticatedUser, unauthorizedResponse } from "@/lib/auth";
+import { adminAuthorizationError } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { hashUserPassword } from "@/lib/user-security";
 
 const userFields = {
   id: true,
+  kodeUser: true,
   fullname: true,
   email: true,
   role: true,
@@ -51,7 +52,8 @@ export async function GET(
   _request: Request,
   context: RouteContext
 ) {
-  if (!(await getAuthenticatedUser())) return unauthorizedResponse();
+  const authorizationError = await adminAuthorizationError();
+  if (authorizationError) return authorizationError;
 
   const userId = await getUserId(context);
 
@@ -98,7 +100,8 @@ export async function PATCH(
   request: Request,
   context: RouteContext
 ) {
-  if (!(await getAuthenticatedUser())) return unauthorizedResponse();
+  const authorizationError = await adminAuthorizationError();
+  if (authorizationError) return authorizationError;
 
   const userId = await getUserId(context);
 
@@ -244,7 +247,8 @@ export async function DELETE(
   _request: Request,
   context: RouteContext
 ) {
-  if (!(await getAuthenticatedUser())) return unauthorizedResponse();
+  const authorizationError = await adminAuthorizationError();
+  if (authorizationError) return authorizationError;
 
   const userId = await getUserId(context);
 

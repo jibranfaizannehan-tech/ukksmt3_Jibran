@@ -107,7 +107,7 @@ export default function Home() {
 
             <Image
               className="p-[1px]"
-              src="/img/smk_mvp_ars_logo_white.png"
+              src="/img/Yamada Ryo.jpg"
               alt="Logo SMK MVP ARS"
               fill
               priority

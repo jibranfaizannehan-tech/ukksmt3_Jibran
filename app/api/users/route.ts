@@ -1,170 +1,136 @@
-import { NextResponse } from "next/server";
-import { getAuthenticatedUser, unauthorizedResponse } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { hashUserPassword } from "@/lib/user-security";
+import { NextResponse } from "next/server"
+import { Prisma } from "@/generated/prisma/client"
+import { adminAuthorizationError } from "@/lib/auth"
+import { prisma } from "@/lib/prisma"
+import { createUserJwt, hashUserPassword } from "@/lib/user-security"
 
-// ==========================================
-// GET: MENAMPILKAN DATA USER
-// ==========================================
+const userFields = {
+  id: true,
+  kodeUser: true,
+  fullname: true,
+  email: true,
+  role: true,
+  createdAt: true,
+  updatedAt: true,
+  token: true,
+} as const
 
-export async function GET() {
-  if (!(await getAuthenticatedUser())) return unauthorizedResponse();
+function isDuplicateError(error: unknown) {
+  return typeof error === "object" && error !== null && "code" in error && error.code === "P2002"
+}
+
+async function generateKodeUser(tx: Prisma.TransactionClient, role: string) {
+  const prefix = role === "admin" ? "ADM" : "STF"
+
+  const lastUser = await tx.user.findFirst({
+    where: {
+      kodeUser: { startsWith: prefix },
+    },
+    orderBy: {
+      kodeUser: "desc",
+    },
+    select: { kodeUser: true },
+  })
+
+  if (!lastUser || !lastUser.kodeUser) {
+    return `${prefix}0000001`
+  }
+
+  const numericPart = lastUser.kodeUser.slice(prefix.length)
+  const lastNumber = Number.parseInt(numericPart, 10)
+  const nextNumber = Number.isNaN(lastNumber) ? 1 : lastNumber + 1
+
+  return `${prefix}${String(nextNumber).padStart(7, "0")}`
+}
+
+export async function GET(request: Request) {
+  const authorizationError = await adminAuthorizationError()
+  if (authorizationError) return authorizationError
+
+  const searchParams = new URL(request.url).searchParams
+  const requestedPage = Number.parseInt(searchParams.get("page") ?? "1", 10)
+  const requestedPageSize = Number.parseInt(searchParams.get("pageSize") ?? "10", 10)
+  const pageSize = Number.isFinite(requestedPageSize)
+    ? Math.min(100, Math.max(1, requestedPageSize))
+    : 10
 
   try {
+    const totalUsers = await prisma.user.count()
+    const totalPages = Math.max(1, Math.ceil(totalUsers / pageSize))
+    const page = Number.isFinite(requestedPage) && requestedPage > 0
+      ? Math.min(requestedPage, totalPages)
+      : 1
     const users = await prisma.user.findMany({
-      select: {
-        id: true,
-        fullname: true,
-        email: true,
-        role: true,
-        createdAt: true,
-      },
-      orderBy: {
-        id: "desc",
-      },
-    });
-
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+      select: userFields,
+    })
     return NextResponse.json({
-      success: true,
-      data: users,
-    });
-
+      users: users.map(({ token, ...user }) => ({ ...user, hasToken: Boolean(token) })),
+      pagination: { page, pageSize, totalUsers, totalPages },
+    })
   } catch (error) {
-    console.error("GET USERS ERROR:", error);
-
-    return NextResponse.json(
-      {
-        success: false,
-        message: "Gagal memuat data user.",
-      },
-      { status: 500 }
-    );
+    console.error("Failed to fetch users:", error)
+    return NextResponse.json({ error: "Gagal memuat data user." }, { status: 500 })
   }
 }
 
-// ==========================================
-// POST: TAMBAH USER
-// ==========================================
-
 export async function POST(request: Request) {
-  if (!(await getAuthenticatedUser())) return unauthorizedResponse();
+  const authorizationError = await adminAuthorizationError()
+  if (authorizationError) return authorizationError
+
+  let body: Record<string, unknown>
+  try {
+    const parsedBody: unknown = await request.json()
+    if (!parsedBody || typeof parsedBody !== "object" || Array.isArray(parsedBody)) {
+      return NextResponse.json({ error: "Format request tidak valid." }, { status: 400 })
+    }
+    body = parsedBody as Record<string, unknown>
+  } catch {
+    return NextResponse.json({ error: "Format request tidak valid." }, { status: 400 })
+  }
+
+  const fullname = typeof body.fullname === "string" ? body.fullname.trim() : ""
+  const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : ""
+  const password = typeof body.password === "string" ? body.password : ""
+  const role = typeof body.role === "string" ? body.role : "staff"
+
+  if (!fullname || fullname.length > 191 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 191) {
+    return NextResponse.json({ error: "Nama atau email tidak valid." }, { status: 400 })
+  }
+  if (password.length < 8) {
+    return NextResponse.json({ error: "Password minimal 8 karakter." }, { status: 400 })
+  }
+  if (role !== "admin" && role !== "staff") {
+    return NextResponse.json({ error: "Role tidak valid." }, { status: 400 })
+  }
+  if (!process.env.JWT_SECRET) {
+    return NextResponse.json({ error: "JWT_SECRET belum diatur." }, { status: 500 })
+  }
 
   try {
-    const body = await request.json();
+    const passwordHash = await hashUserPassword(password)
+    const user = await prisma.$transaction(async (transaction) => {
+      const kodeUser = await generateKodeUser(transaction, role)
+      const created = await transaction.user.create({
+        data: { kodeUser, fullname, email, password: passwordHash, role },
+      })
+      const token = createUserJwt(created)
+      return transaction.user.update({
+        where: { id: created.id },
+        data: { token },
+        select: userFields,
+      })
+    })
 
-    const fullname = String(body.fullname ?? "").trim();
-    const email = String(body.email ?? "").trim().toLowerCase();
-    const password = String(body.password ?? "");
-    const role = String(body.role ?? "").trim().toLowerCase();
-
-    // VALIDASI INPUT
-
-    if (!fullname || !email || !password || !role) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Semua field wajib diisi.",
-        },
-        { status: 400 }
-      );
-    }
-
-    // VALIDASI EMAIL
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Format email tidak valid.",
-        },
-        { status: 400 }
-      );
-    }
-
-    // VALIDASI PASSWORD
-
-    if (password.length < 8) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Password minimal 8 karakter.",
-        },
-        { status: 400 }
-      );
-    }
-
-    // VALIDASI ROLE
-
-    const allowedRoles = ["admin", "guru", "siswa"];
-
-    if (!allowedRoles.includes(role)) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Role tidak valid.",
-        },
-        { status: 400 }
-      );
-    }
-
-    // CEK EMAIL DUPLIKAT
-
-    const existingUser = await prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
-
-    if (existingUser) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Email sudah terdaftar.",
-        },
-        { status: 409 }
-      );
-    }
-
-    // ENKRIPSI PASSWORD MENGGUNAKAN SCRYPT
-
-    const hashedPassword = await hashUserPassword(password);
-
-    // SIMPAN USER KE DATABASE
-
-    const user = await prisma.user.create({
-      data: {
-        fullname,
-        email,
-        password: hashedPassword,
-        role,
-      },
-      select: {
-        id: true,
-        fullname: true,
-        email: true,
-        role: true,
-        createdAt: true,
-      },
-    });
-
-    return NextResponse.json(
-      {
-        success: true,
-        message: "User berhasil ditambahkan.",
-        data: user,
-      },
-      { status: 201 }
-    );
-
+    const { token, ...safeUser } = user
+    return NextResponse.json({ user: { ...safeUser, hasToken: Boolean(token) } }, { status: 201 })
   } catch (error) {
-    console.error("POST USER ERROR:", error);
-
-    return NextResponse.json(
-      {
-        success: false,
-        message: "Gagal menyimpan user.",
-      },
-      { status: 500 }
-    );
+    if (isDuplicateError(error)) {
+      return NextResponse.json({ error: "Email atau kode user sudah digunakan." }, { status: 409 })
+    }
+    console.error("Failed to create user:", error)
+    return NextResponse.json({ error: "Gagal membuat user. Periksa koneksi database." }, { status: 500 })
   }
 }

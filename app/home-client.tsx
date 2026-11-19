@@ -25,7 +25,7 @@ export default function Home() {
           <div className="relative w-[200px] h-[50px] rounded-[70px] items-center justify-start">
             <Image
               className="p-[1px]"
-              src="/img/smk_mvp_ars_logo_white.png"
+              src="/img/Yamada Ryo.jpg"
               alt="logo"
               fill
             />

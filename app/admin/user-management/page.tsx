@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Pencil, Plus, Trash2 } from "lucide-react"
 
@@ -28,6 +28,7 @@ import {
 
 type ManagedUser = {
     id: number
+    kodeUser: string
     fullname: string
     email: string
     role: string
@@ -50,10 +51,7 @@ export default function UserManagementPage() {
     // MEMUAT DATA USER
     // ==============================
 
-    async function loadUsers(page = currentPage) {
-        setIsLoading(true)
-        setError("")
-
+    const loadUsers = useCallback(async (page: number) => {
         try {
             const response = await fetch(
                 `/api/users?page=${page}&pageSize=${PAGE_SIZE}`,
@@ -85,6 +83,7 @@ export default function UserManagementPage() {
             const formattedUsers: ManagedUser[] = usersData.map(
                 (user: ManagedUser) => ({
                     id: Number(user.id),
+                    kodeUser: user.kodeUser,
                     fullname: user.fullname,
                     email: user.email,
                     role: user.role,
@@ -120,15 +119,15 @@ export default function UserManagementPage() {
         } finally {
             setIsLoading(false)
         }
-    }
+    }, [])
 
     // ==============================
     // LOAD PERTAMA KALI
     // ==============================
 
     useEffect(() => {
-        void loadUsers(1)
-    }, [])
+        void Promise.resolve().then(() => loadUsers(1))
+    }, [loadUsers])
 
     // ==============================
     // PAGINATION
@@ -137,6 +136,8 @@ export default function UserManagementPage() {
     function goToPage(page: number) {
         if (page < 1 || page > totalPages || isLoading) return
 
+        setIsLoading(true)
+        setError("")
         void loadUsers(page)
     }
 
@@ -173,6 +174,7 @@ export default function UserManagementPage() {
 
             alert("User berhasil dihapus.")
 
+            setIsLoading(true)
             if (users.length === 1 && currentPage > 1) {
                 await loadUsers(currentPage - 1)
             } else {
@@ -289,7 +291,7 @@ export default function UserManagementPage() {
                                 <TableRow key={user.id}>
 
                                     <TableCell>
-                                        {user.id}
+                                        {user.kodeUser}
                                     </TableCell>
 
                                     <TableCell className="font-medium">

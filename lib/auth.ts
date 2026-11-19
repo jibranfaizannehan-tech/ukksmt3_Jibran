@@ -37,3 +37,19 @@ export function unauthorizedResponse() {
     { status: 401 }
   );
 }
+
+export function forbiddenResponse() {
+  return NextResponse.json(
+    { success: false, message: "Hanya admin yang dapat mengelola pengguna." },
+    { status: 403 }
+  );
+}
+
+export async function adminAuthorizationError() {
+  const user = await getAuthenticatedUser();
+
+  if (!user) return unauthorizedResponse();
+  if (user.role !== "admin") return forbiddenResponse();
+
+  return null;
+}
