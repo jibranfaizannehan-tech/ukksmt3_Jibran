@@ -23,7 +23,7 @@ export default function UserManagementPage() {
 
    <div className="flex justify-end mb-4">
           <Link href="/admin/jurusan/from">
-            <Button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold">
+            <Button className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold">
               <Plus className="mr-2 h-4 w-4" /> FORM
             </Button>
           </Link>

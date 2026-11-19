@@ -39,10 +39,10 @@ const listMenu = [
 
 export function AppSidebar() {
   return (
-    <Sidebar className="border-r-0 [&>div]:bg-blue-600 [&>div]:text-white">
-      <div className="flex h-full w-full flex-col bg-blue-600 text-white">
+    <Sidebar className="border-r-0 [&>div]:bg-emerald-700 [&>div]:text-white">
+      <div className="flex h-full w-full flex-col bg-emerald-700 text-white">
         {/* Header Logo */}
-        <SidebarHeader className="p-4 bg-blue-600">
+        <SidebarHeader className="p-4 bg-emerald-700">
           <div className="flex items-center justify-center gap-3 px-3 py-2">
             <Image
               src="/img/smk_mvp_ars_logo_white.png"
@@ -56,7 +56,7 @@ export function AppSidebar() {
         </SidebarHeader>
 
         {/* Content Menu */}
-        <SidebarContent className="bg-blue-600">
+        <SidebarContent className="bg-emerald-700">
           <SidebarGroup>
             <SidebarGroupLabel className="text-white/80 text-xs font-semibold px-2 mb-2">
               Menu Utama
@@ -69,7 +69,7 @@ export function AppSidebar() {
                   <SidebarMenuItem key={menu.name}>
                     <SidebarMenuButton
                       asChild
-                      className="text-white hover:bg-blue-700 hover:text-white active:bg-blue-800"
+                      className="text-white hover:bg-emerald-800 hover:text-white active:bg-emerald-900"
                     >
                       <Link href={menu.url}>
                         <menu.icon className="w-4 h-4 mr-2" />
@@ -84,7 +84,7 @@ export function AppSidebar() {
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild
-                    className="text-white hover:bg-blue-700 hover:text-white active:bg-blue-800"
+                    className="text-white hover:bg-emerald-800 hover:text-white active:bg-emerald-900"
                   >
                     <Link href="/admin/categories">
                       <Users className="w-4 h-4 mr-2" />
@@ -97,7 +97,7 @@ export function AppSidebar() {
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild
-                    className="text-white hover:bg-blue-700 hover:text-white active:bg-blue-800"
+                    className="text-white hover:bg-emerald-800 hover:text-white active:bg-emerald-900"
                   >
                     <Link href="/admin/jurusan">
                       <GraduationCap className="w-4 h-4 mr-2" />
@@ -110,7 +110,7 @@ export function AppSidebar() {
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild
-                    className="text-white hover:bg-blue-700 hover:text-white active:bg-blue-800"
+                    className="text-white hover:bg-emerald-800 hover:text-white active:bg-emerald-900"
                   >
                     <Link href="/admin/artikel">
                       <BookOpen className="w-4 h-4 mr-2" />
@@ -123,7 +123,7 @@ export function AppSidebar() {
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild
-                    className="text-white hover:bg-blue-700 hover:text-white active:bg-blue-800"
+                    className="text-white hover:bg-emerald-800 hover:text-white active:bg-emerald-900"
                   >
                     <Link href="/admin/profile">
                       <Calendar className="w-4 h-4 mr-2" />
@@ -136,7 +136,7 @@ export function AppSidebar() {
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild
-                    className="text-white hover:bg-blue-700 hover:text-white active:bg-blue-800"
+                    className="text-white hover:bg-emerald-800 hover:text-white active:bg-emerald-900"
                   >
                     <Link href="/admin/pengaturan">
                       <Settings className="w-4 h-4 mr-2" />
@@ -150,7 +150,7 @@ export function AppSidebar() {
           </SidebarGroup>
         </SidebarContent>
 
-        <SidebarFooter className="bg-blue-600" />
+        <SidebarFooter className="bg-emerald-700" />
       </div>
     </Sidebar>
   );

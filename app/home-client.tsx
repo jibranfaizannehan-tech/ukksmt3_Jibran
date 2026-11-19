@@ -1,8 +1,8 @@
 "use client";
 import Image from "next/image";
-import { MenuLandingPage } from "./component/landing-page-menu/page";
+import { MenuLandingPage } from "./component/landing-page-menu/menu";
 import { Button } from "@/components/ui/button";
-import { LandingPageHero } from "./component/landing-page-hero/page";
+import { LandingPageHero } from "./component/landing-page-hero/hero";
 import { SearchIcon, X } from "lucide-react";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 import {
@@ -20,7 +20,7 @@ export default function Home() {
         <LandingPageHero />
       </div>
       <div className="absolute top-0 left-0 z-10 w-full flex justify-center">
-        <div className="w-[95%] h-[80px] bg-blue-800 dark:bg-blue-800 rounded-[70px] flex mt-4 mx-8 p-4">
+        <div className="w-[95%] h-[80px] bg-emerald-800 dark:bg-emerald-800 rounded-[70px] flex mt-4 mx-8 p-4">
           {/* logo */}
           <div className="relative w-[200px] h-[50px] rounded-[70px] items-center justify-start">
             <Image
@@ -41,11 +41,11 @@ export default function Home() {
               className="
               bg-white 
               border border-gray-300 
-              text-orange-500 
+              text-emerald-700 
               hover:bg-gray-100 
               dark:bg-gray-800 
               dark:border-gray-700 
-              dark:text-orange-400
+              dark:text-emerald-400
               text-[16px]
               font-semibold
               rounded-full

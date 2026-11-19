@@ -36,7 +36,7 @@ export default function FormTambahJurusan() {
           <label className="block text-sm font-medium mb-1">Deskripsi Jurusan</label>
           <textarea 
             rows={4}
-            className="flex w-full rounded-md border border-gray-200 bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500"
+            className="flex w-full rounded-md border border-gray-200 bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
             placeholder="Tuliskan penjelasan mengenai kompetensi keahlian jurusan ini..."
           />
         </div>
@@ -49,7 +49,7 @@ export default function FormTambahJurusan() {
               Batal
             </Button>
           </Link>
-          <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto">
+          <Button type="submit" className="bg-emerald-700 hover:bg-emerald-800 text-white w-full sm:w-auto">
             Simpan Jurusan
           </Button>
         </div>
