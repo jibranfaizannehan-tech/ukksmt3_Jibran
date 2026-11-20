@@ -13,12 +13,10 @@ datasource db {
 
 model User {
   id        Int      @id @default(autoincrement())
- 4
   fullname  String   @db.VarChar(191)
   email     String   @unique @db.VarChar(191)
   password  String   @db.VarChar(191)
   role      String   @default("staff") @db.VarChar(191)
-  token     String?  @db.Text
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 

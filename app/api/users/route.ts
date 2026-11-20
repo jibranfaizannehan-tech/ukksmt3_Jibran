@@ -1,46 +1,19 @@
 import { NextResponse } from "next/server"
-import { Prisma } from "@/generated/prisma/client"
 import { adminAuthorizationError } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { createUserJwt, hashUserPassword } from "@/lib/user-security"
+import { hashUserPassword } from "@/lib/user-security"
 
 const userFields = {
   id: true,
-  kodeUser: true,
   fullname: true,
   email: true,
   role: true,
   createdAt: true,
   updatedAt: true,
-  token: true,
 } as const
 
 function isDuplicateError(error: unknown) {
   return typeof error === "object" && error !== null && "code" in error && error.code === "P2002"
-}
-
-async function generateKodeUser(tx: Prisma.TransactionClient, role: string) {
-  const prefix = role === "admin" ? "ADM" : "STF"
-
-  const lastUser = await tx.user.findFirst({
-    where: {
-      kodeUser: { startsWith: prefix },
-    },
-    orderBy: {
-      kodeUser: "desc",
-    },
-    select: { kodeUser: true },
-  })
-
-  if (!lastUser || !lastUser.kodeUser) {
-    return `${prefix}0000001`
-  }
-
-  const numericPart = lastUser.kodeUser.slice(prefix.length)
-  const lastNumber = Number.parseInt(numericPart, 10)
-  const nextNumber = Number.isNaN(lastNumber) ? 1 : lastNumber + 1
-
-  return `${prefix}${String(nextNumber).padStart(7, "0")}`
 }
 
 export async function GET(request: Request) {
@@ -67,7 +40,7 @@ export async function GET(request: Request) {
       select: userFields,
     })
     return NextResponse.json({
-      users: users.map(({ token, ...user }) => ({ ...user, hasToken: Boolean(token) })),
+      users,
       pagination: { page, pageSize, totalUsers, totalPages },
     })
   } catch (error) {
@@ -111,24 +84,15 @@ export async function POST(request: Request) {
 
   try {
     const passwordHash = await hashUserPassword(password)
-    const user = await prisma.$transaction(async (transaction) => {
-      const kodeUser = await generateKodeUser(transaction, role)
-      const created = await transaction.user.create({
-        data: { kodeUser, fullname, email, password: passwordHash, role },
-      })
-      const token = createUserJwt(created)
-      return transaction.user.update({
-        where: { id: created.id },
-        data: { token },
-        select: userFields,
-      })
+    const user = await prisma.user.create({
+      data: { fullname, email, password: passwordHash, role },
+      select: userFields,
     })
 
-    const { token, ...safeUser } = user
-    return NextResponse.json({ user: { ...safeUser, hasToken: Boolean(token) } }, { status: 201 })
+    return NextResponse.json({ user }, { status: 201 })
   } catch (error) {
     if (isDuplicateError(error)) {
-      return NextResponse.json({ error: "Email atau kode user sudah digunakan." }, { status: 409 })
+      return NextResponse.json({ error: "Email sudah digunakan." }, { status: 409 })
     }
     console.error("Failed to create user:", error)
     return NextResponse.json({ error: "Gagal membuat user. Periksa koneksi database." }, { status: 500 })

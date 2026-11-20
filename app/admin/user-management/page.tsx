@@ -28,11 +28,9 @@ import {
 
 type ManagedUser = {
     id: number
-    kodeUser: string
     fullname: string
     email: string
     role: string
-    hasToken?: boolean
     createdAt: string
 }
 
@@ -83,11 +81,9 @@ export default function UserManagementPage() {
             const formattedUsers: ManagedUser[] = usersData.map(
                 (user: ManagedUser) => ({
                     id: Number(user.id),
-                    kodeUser: user.kodeUser,
                     fullname: user.fullname,
                     email: user.email,
                     role: user.role,
-                    hasToken: Boolean(user.hasToken),
                     createdAt: user.createdAt,
                 })
             )
@@ -252,7 +248,6 @@ export default function UserManagementPage() {
                             <TableHead>Nama lengkap</TableHead>
                             <TableHead>Email</TableHead>
                             <TableHead>Role</TableHead>
-                            <TableHead>JWT</TableHead>
                             <TableHead>Dibuat</TableHead>
                             <TableHead className="text-right">
                                 Aksi
@@ -266,7 +261,7 @@ export default function UserManagementPage() {
 
                             <TableRow>
                                 <TableCell
-                                    colSpan={7}
+                                    colSpan={6}
                                     className="h-24 text-center"
                                 >
                                     Memuat user...
@@ -277,7 +272,7 @@ export default function UserManagementPage() {
 
                             <TableRow>
                                 <TableCell
-                                    colSpan={7}
+                                    colSpan={6}
                                     className="h-24 text-center"
                                 >
                                     Belum ada user.
@@ -291,7 +286,7 @@ export default function UserManagementPage() {
                                 <TableRow key={user.id}>
 
                                     <TableCell>
-                                        {user.kodeUser}
+                                        {user.id}
                                     </TableCell>
 
                                     <TableCell className="font-medium">
@@ -304,12 +299,6 @@ export default function UserManagementPage() {
 
                                     <TableCell className="capitalize">
                                         {user.role}
-                                    </TableCell>
-
-                                    <TableCell>
-                                        {user.hasToken
-                                            ? "Tersimpan"
-                                            : "Belum ada"}
                                     </TableCell>
 
                                     <TableCell>

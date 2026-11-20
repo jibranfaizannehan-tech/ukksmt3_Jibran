@@ -5,7 +5,6 @@ import { hashUserPassword } from "@/lib/user-security";
 
 const userFields = {
   id: true,
-  kodeUser: true,
   fullname: true,
   email: true,
   role: true,
