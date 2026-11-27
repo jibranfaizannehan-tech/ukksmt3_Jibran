@@ -23,21 +23,34 @@ model User {
   @@map("users")
 }
 
-model Category {
-  id        Int      @id @default(autoincrement())
-  name      String
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+model Facility {
+  kodeFacility String             @id @map("kode_facility") @db.VarChar(191)
+  namaFacility String             @map("nama_facility") @db.VarChar(191)
+  createdAt    DateTime           @default(now()) @map("created_at")
+  updatedAt    DateTime           @updatedAt @map("updated_at")
+  typeUnits    TypeUnitFacility[]
 
-  @@map("categories")
+  @@map("facility")
 }
 
-model Jurusan {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String   @db.Text
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+model TypeUnit {
+  idUnitType   Int                @id @default(autoincrement()) @map("id_unit_type")
+  namaTypeUnit String             @map("nama_type_unit") @db.VarChar(191)
+  branchId     String             @map("branch_id") @db.VarChar(191)
+  createdAt    DateTime           @default(now()) @map("created_at")
+  updatedAt    DateTime           @updatedAt @map("updated_at")
+  facilities   TypeUnitFacility[]
 
-  @@map("jurusan")
+  @@map("type_unit")
+}
+
+model TypeUnitFacility {
+  idUnitType   Int      @map("id_unit_type")
+  kodeFacility String   @map("kode_facility") @db.VarChar(191)
+  typeUnit     TypeUnit @relation(fields: [idUnitType], references: [idUnitType], onDelete: Cascade)
+  facility     Facility @relation(fields: [kodeFacility], references: [kodeFacility], onDelete: Cascade)
+
+  @@id([idUnitType, kodeFacility])
+  @@index([kodeFacility])
+  @@map("type_unit_facility")
 }

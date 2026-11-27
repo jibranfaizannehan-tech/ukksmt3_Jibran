@@ -4,7 +4,7 @@ import { MenuLandingPage } from "./component/landing-page-menu/menu";
 import { Button } from "@/components/ui/button";
 import { LandingPageHero } from "./component/landing-page-hero/hero";
 import { SearchIcon, X } from "lucide-react";
-import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
+import { Field, FieldLabel } from "@/components/ui/field";
 import {
   InputGroup,
   InputGroupAddon,

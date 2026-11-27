@@ -53,17 +53,28 @@ export default function Home() {
         }),
       });
 
-      const result = await response.json();
+      const result: unknown = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          result.error ||
-          "Login gagal. Periksa email dan password."
-        );
+        const message =
+          typeof result === "object" &&
+          result !== null &&
+          "error" in result &&
+          typeof result.error === "string"
+            ? result.error
+            : "Login gagal. Periksa email dan password.";
+        setError(message);
+        return;
       }
 
-      if (!result.user) {
-        throw new Error("Data pengguna tidak ditemukan.");
+      if (
+        typeof result !== "object" ||
+        result === null ||
+        !("user" in result) ||
+        !result.user
+      ) {
+        setError("Data pengguna tidak ditemukan.");
+        return;
       }
 
       // LOGIN BERHASIL
@@ -73,8 +84,6 @@ export default function Home() {
       router.refresh();
 
     } catch (err) {
-      console.error("LOGIN ERROR:", err);
-
       setError(
         err instanceof Error
           ? err.message
@@ -108,7 +117,7 @@ export default function Home() {
             <Image
               className="p-[1px]"
               src="/img/Yamada Ryo.jpg"
-              alt="Logo SMK MVP ARS"
+              alt="Logo "
               fill
               priority
             />

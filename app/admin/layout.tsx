@@ -1,5 +1,6 @@
 
 import { redirect } from "next/navigation";
+import type { CSSProperties } from "react";
 import { getAuthenticatedUser } from "@/lib/auth";
 
 import { AppSidebar } from "@/app/component/app-sidebar";
@@ -13,8 +14,8 @@ import {
 
 import {
   Avatar,
-  AvatarFallback,
   AvatarImage,
+  AvatarFallback,
 } from "@/components/ui/avatar";
 
 import { Button } from "@/components/ui/button";
@@ -37,15 +38,24 @@ export default async function Layout({
 }) {
   const authenticatedUser = await getAuthenticatedUser();
   if (!authenticatedUser) redirect("/");
+  const initials = authenticatedUser.fullname
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0] ?? "")
+    .join("")
+    .toUpperCase();
 
   return (
-      <SidebarProvider>
+      <SidebarProvider
+        style={{ "--sidebar-width": "10.75rem" } as CSSProperties}
+      >
         {/* Sidebar utama admin */}
         <AppSidebar />
 
         <SidebarInset>
           {/* Navbar bagian atas */}
-          <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b px-4">
+          <header className="flex h-12 shrink-0 items-center justify-between gap-2 border-b border-slate-200 bg-white px-4">
 
             {/* Tombol buka/tutup sidebar */}
             <div className="flex items-center gap-2">
@@ -63,16 +73,16 @@ export default async function Layout({
                 <Button
                   variant="ghost"
                   size="icon"
+                  aria-label="Buka menu akun"
                   className="rounded-full"
                 >
-                  <Avatar>
+                  <Avatar className="size-7">
                     <AvatarImage
                       src="https://github.com/shadcn.png"
                       alt="Profile"
                     />
-
-                    <AvatarFallback>
-                      CN
+                    <AvatarFallback className="bg-slate-100 text-xs text-slate-700">
+                      {initials || "A"}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
@@ -109,7 +119,7 @@ export default async function Layout({
           </header>
 
           {/* Konten halaman admin */}
-          <main className="flex flex-1 flex-col gap-4 p-4">
+          <main className="flex flex-1 flex-col gap-4 bg-slate-50 p-4">
             {children}
           </main>
 

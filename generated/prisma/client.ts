@@ -47,12 +47,17 @@ export { Prisma }
  */
 export type User = Prisma.UserModel
 /**
- * Model Category
+ * Model Facility
  * 
  */
-export type Category = Prisma.CategoryModel
+export type Facility = Prisma.FacilityModel
 /**
- * Model Jurusan
+ * Model TypeUnit
  * 
  */
-export type Jurusan = Prisma.JurusanModel
+export type TypeUnit = Prisma.TypeUnitModel
+/**
+ * Model TypeUnitFacility
+ * 
+ */
+export type TypeUnitFacility = Prisma.TypeUnitFacilityModel

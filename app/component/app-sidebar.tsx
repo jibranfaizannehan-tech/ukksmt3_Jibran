@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Sidebar,
   SidebarContent,
@@ -11,146 +13,99 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import {
-  LayoutDashboard,
-  Users,
-  GraduationCap,
-  BookOpen,
-  Calendar,
-  FileText,
-  Settings,
+  Boxes,
+  Building2,
   UsersRound,
   House,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const listMenu = [
   {
-    name: "Dashboard",
+    name: "dashboard",
     url: "/admin",
     icon: House,
   },
   {
-    name: "User Management",
+    name: "user management",
     url: "/admin/user-management",
     icon: UsersRound,
+  },
+  {
+    name: "Type Unit",
+    url: "/admin/type_unit",
+    icon: Boxes,
+  },
+  {
+    name: "Facilities",
+    url: "/admin/facility",
+    icon: Building2,
   },
 ];
 
 export function AppSidebar() {
+  const pathname = usePathname();
+
   return (
-    <Sidebar className="border-r-0 [&>div]:bg-emerald-700 [&>div]:text-white">
-      <div className="flex h-full w-full flex-col bg-emerald-700 text-white">
+    <Sidebar className="border-r-0 bg-emerald-800 text-white [&>div]:bg-emerald-800">
+      <div className="flex h-full w-full flex-col bg-emerald-800 text-white">
         {/* Header Logo */}
-        <SidebarHeader className="p-4 bg-emerald-700">
-          <div className="flex items-center justify-center gap-3 px-3 py-2">
+        <SidebarHeader className="bg-emerald-800 px-3 py-5">
+          <div className="flex items-center gap-2">
             <Image
-              src="/img/smk_mvp_ars_logo_white.png"
-              alt="SMK MVP ARS"
-              width={200}
-              height={200}
-              className="w-auto h-auto max-h-12 object-contain"
-              priority
+              src="/img/Yamada Ryo.jpg"
+              alt="Admin"
+              width={32}
+              height={32}
+              className="size-8 shrink-0 rounded-full object-cover"
             />
+            <div className="min-w-0 leading-tight">
+              <p className="truncate text-sm font-bold tracking-wide">Admin</p>
+            </div>
           </div>
         </SidebarHeader>
 
         {/* Content Menu */}
-        <SidebarContent className="bg-emerald-700">
+        <SidebarContent className="bg-emerald-800">
           <SidebarGroup>
-            <SidebarGroupLabel className="text-white/80 text-xs font-semibold px-2 mb-2">
-              Menu Utama
+            <SidebarGroupLabel className="mb-2 px-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/60">
+              Menu
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                
-                {/* 1. Menu dari array listMenu pakai metode .map() */}
                 {listMenu.map((menu) => (
                   <SidebarMenuItem key={menu.name}>
                     <SidebarMenuButton
                       asChild
-                      className="text-white hover:bg-emerald-800 hover:text-white active:bg-emerald-900"
+                      className={`h-8 text-xs text-white/90 hover:bg-white/10 hover:text-white active:bg-white/15 ${
+                        pathname === menu.url || pathname.startsWith(`${menu.url}/`)
+                          ? "bg-white/15 text-white"
+                          : ""
+                      }`}
                     >
-                      <Link href={menu.url}>
-                        <menu.icon className="w-4 h-4 mr-2" />
+                      <Link
+                        href={menu.url}
+                        aria-current={
+                          pathname === menu.url ||
+                          pathname.startsWith(`${menu.url}/`)
+                            ? "page"
+                            : undefined
+                        }
+                      >
+                        <menu.icon className="mr-2 size-3.5" />
                         <span>{menu.name}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
-
-                
-                {/* Siswa */}
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    className="text-white hover:bg-emerald-800 hover:text-white active:bg-emerald-900"
-                  >
-                    <Link href="/admin/categories">
-                      <Users className="w-4 h-4 mr-2" />
-                      <span>Categories</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-
-                {/* Jurusan */}
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    className="text-white hover:bg-emerald-800 hover:text-white active:bg-emerald-900"
-                  >
-                    <Link href="/admin/jurusan">
-                      <GraduationCap className="w-4 h-4 mr-2" />
-                      <span>Jurusan</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-
-                {/* Mata Pelajaran */}
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    className="text-white hover:bg-emerald-800 hover:text-white active:bg-emerald-900"
-                  >
-                    <Link href="/admin/artikel">
-                      <BookOpen className="w-4 h-4 mr-2" />
-                      <span>Artikel</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-
-                {/* Jadwal */}
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    className="text-white hover:bg-emerald-800 hover:text-white active:bg-emerald-900"
-                  >
-                    <Link href="/admin/profile">
-                      <Calendar className="w-4 h-4 mr-2" />
-                      <span>Profile</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-
-                {/* Pengaturan */}
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    className="text-white hover:bg-emerald-800 hover:text-white active:bg-emerald-900"
-                  >
-                    <Link href="/admin/pengaturan">
-                      <Settings className="w-4 h-4 mr-2" />
-                      <span>Pengaturan</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
 
-        <SidebarFooter className="bg-emerald-700" />
+        <SidebarFooter className="bg-emerald-800" />
       </div>
     </Sidebar>
   );

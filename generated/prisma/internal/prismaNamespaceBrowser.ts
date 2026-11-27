@@ -52,8 +52,9 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
-  Category: 'Category',
-  Jurusan: 'Jurusan'
+  Facility: 'Facility',
+  TypeUnit: 'TypeUnit',
+  TypeUnitFacility: 'TypeUnitFacility'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -85,25 +86,33 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
-export const CategoryScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
+export const FacilityScalarFieldEnum = {
+  kodeFacility: 'kodeFacility',
+  namaFacility: 'namaFacility',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
+export type FacilityScalarFieldEnum = (typeof FacilityScalarFieldEnum)[keyof typeof FacilityScalarFieldEnum]
 
 
-export const JurusanScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
+export const TypeUnitScalarFieldEnum = {
+  idUnitType: 'idUnitType',
+  namaTypeUnit: 'namaTypeUnit',
+  branchId: 'branchId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type JurusanScalarFieldEnum = (typeof JurusanScalarFieldEnum)[keyof typeof JurusanScalarFieldEnum]
+export type TypeUnitScalarFieldEnum = (typeof TypeUnitScalarFieldEnum)[keyof typeof TypeUnitScalarFieldEnum]
+
+
+export const TypeUnitFacilityScalarFieldEnum = {
+  idUnitType: 'idUnitType',
+  kodeFacility: 'kodeFacility'
+} as const
+
+export type TypeUnitFacilityScalarFieldEnum = (typeof TypeUnitFacilityScalarFieldEnum)[keyof typeof TypeUnitFacilityScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -124,17 +133,25 @@ export const UserOrderByRelevanceFieldEnum = {
 export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
 
 
-export const CategoryOrderByRelevanceFieldEnum = {
-  name: 'name'
+export const FacilityOrderByRelevanceFieldEnum = {
+  kodeFacility: 'kodeFacility',
+  namaFacility: 'namaFacility'
 } as const
 
-export type CategoryOrderByRelevanceFieldEnum = (typeof CategoryOrderByRelevanceFieldEnum)[keyof typeof CategoryOrderByRelevanceFieldEnum]
+export type FacilityOrderByRelevanceFieldEnum = (typeof FacilityOrderByRelevanceFieldEnum)[keyof typeof FacilityOrderByRelevanceFieldEnum]
 
 
-export const JurusanOrderByRelevanceFieldEnum = {
-  name: 'name',
-  description: 'description'
+export const TypeUnitOrderByRelevanceFieldEnum = {
+  namaTypeUnit: 'namaTypeUnit',
+  branchId: 'branchId'
 } as const
 
-export type JurusanOrderByRelevanceFieldEnum = (typeof JurusanOrderByRelevanceFieldEnum)[keyof typeof JurusanOrderByRelevanceFieldEnum]
+export type TypeUnitOrderByRelevanceFieldEnum = (typeof TypeUnitOrderByRelevanceFieldEnum)[keyof typeof TypeUnitOrderByRelevanceFieldEnum]
+
+
+export const TypeUnitFacilityOrderByRelevanceFieldEnum = {
+  kodeFacility: 'kodeFacility'
+} as const
+
+export type TypeUnitFacilityOrderByRelevanceFieldEnum = (typeof TypeUnitFacilityOrderByRelevanceFieldEnum)[keyof typeof TypeUnitFacilityOrderByRelevanceFieldEnum]
 

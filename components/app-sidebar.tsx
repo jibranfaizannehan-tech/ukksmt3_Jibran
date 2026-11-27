@@ -11,12 +11,10 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import {
-  LayoutDashboard,
   Users,
   GraduationCap,
   BookOpen,
   Calendar,
-  FileText,
   Settings,
   UsersRound,
   House,
@@ -46,7 +44,7 @@ export function AppSidebar() {
           <div className="flex items-center justify-center gap-3 px-3 py-2">
             <Image
               src="/img/Yamada Ryo.jpg"
-              alt="SMK MVP ARS"
+              alt="logo"
               width={200}
               height={200}
               className="w-auto h-auto max-h-12 object-contain"

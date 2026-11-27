@@ -9,6 +9,7 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/User'
-export type * from './models/Category'
-export type * from './models/Jurusan'
+export type * from './models/Facility'
+export type * from './models/TypeUnit'
+export type * from './models/TypeUnitFacility'
 export type * from './commonInputTypes'
